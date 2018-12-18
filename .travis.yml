@@ -1,0 +1,23 @@
+language: node_js
+
+node_js:
+  - node
+
+addons:
+  chrome: stable
+
+services:
+  - docker
+
+install:
+  - npm ci
+
+jobs:
+  include:
+    - stage: verify
+      script: npm run e2e
+      script: npm run test
+      script: npm run lint
+    - stage: build
+      script: docker build -t portal .
+
