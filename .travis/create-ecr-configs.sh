@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+mkdir -p ~/.aws
+
 cat << EOF > ~/.aws/config
 [default]
 region = eu-west-1
