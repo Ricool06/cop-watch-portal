@@ -11,16 +11,14 @@ script:
 - npm run e2e
 - npm run test:ci
 - npm run lint
-- docker build -t cop-watch-portal .
+- docker build -t $DOCKER_USERNAME/cop-watch-portal:$TRAVIS_TAG .
+before_deploy:
+  - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
 deploy:
   provider: script
-  script:
-  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-  - docker tag cop-watch-portal:latest $DOCKER_USERNAME/cop-watch-portal:$TRAVIS_TAG
-  - docker push $DOCKER_USERNAME/cop-watch-portal:$TRAVIS_TAG
+  script: docker push $DOCKER_USERNAME/cop-watch-portal:$TRAVIS_TAG
   on:
     tags: true
-
 env:
   global:
     DOCKER_USERNAME:
