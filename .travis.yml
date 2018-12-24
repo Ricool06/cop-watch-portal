@@ -1,13 +1,16 @@
 language: node_js
 
 node_js:
-- node
+  - node
+
+cache:
+  - npm
 
 addons:
   chrome: stable
 
 services:
-- docker
+  - docker
 
 env:
   global:
@@ -26,13 +29,10 @@ jobs:
   include:
   - stage: verify
     script:
-      - npm ci
       - npm run e2e
   - script:
-      - npm ci
       - npm run test:ci
   - script:
-      - npm ci
       - npm run lint
   - stage: build
     script: docker build -t cop-watch/portal .
