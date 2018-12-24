@@ -1,49 +1,24 @@
 language: node_js
-
 node_js:
-  - node
-
+- node
 cache:
-  - npm
-
+- npm
 addons:
   chrome: stable
-
 services:
-  - docker
-
-env:
-  global:
-  # AWS_ACCESS_KEY_ID
-  - secure: g08tVZkQS0m2P17Xlm7sGxlpwCb5gRObePbLSvB2Z8nKRORqvoVxmtif2wqA8Th/7Uu2CrMvWK0ZSNbrVw+R+y89XqCL8K7vj3U5x2URXga5jFE1S3jtMgKO4s9CiJ0nnVe9LQ1De3Dd9kHeoeEnUwaQLDINCeMSM5z4GStZG5OI3PP0kkP0l3sp9nyIdUqwiQWVonTpNykvsqg4fPrnCRyNwTmswioIBGJpko/ulawJtQvBot1hRNM7TMJ/KRrltRfilXBEgAYYrYGNgtmx+Adb9UW4o7X0B6UbNXJKMzQH0+j9oO3223uyVn2RbCMfQ0D7rXOp8ZvLM25bWrJMONX9j8qxwg7QCUfizvaqiebjoELuAJNuyTYQsiZAIfm547BPJNPvc9QK2vdou0b1UBWY7AyCtZgtbhVPXb+3ot5lOsza/Fv7u6iZm8V36xDzcJ//g7XnGtve2lhyRvqNv+e9alkS+3ig4W7YfMjd+yVTzmTRXEo7d43XgItyasJWACbqgLpkwVSp8DSdH2Y3sbcYGBMjsnZ1OSNN2uKLsdLuaPsjwtkMZ94/bF2g78b608sL8fEVxMwPoNG9JtJNdqDk970uPNu9oMMdnqU/3c1qe8mmYBnssNwFc4ARUWRQJ3gmBlD/ElHtbZZpT5vamQxVswHBkoAjHYXIcWwlybE=
-  # AWS_SECRET_ACCESS_KEY
-  - secure: I4VV7CBWhAOnWsGjNASqVrLEJ2JIjIT00R8gJ7JswyOfqS0cgKS3qCnHnuRrr8lHe89nV8coOp/7zdfMMpLp/S+NLkw1/cAkXBA+tAGn0e1JvwGCq1bOXbldPgRb6rH1mM3sblosJ8STDjdPwwjoTfKBn95MT2W2TTkZTFTBwTLRH5mF95rLlejWnWqpInffis04BLuSbef9AQnYcJ1/J8n8K4CJhAyELssFIZR1imwQdjnrtOcKaTmmPPtyvRzQ+Xy+cIHnPK9xnl++/89K7TpRJUNlzHtDk8P/OAgJgo2vQ1h92w9GS6SM1tQHxJUbkjzvJCkDOJWg1IuplKu+D14fOWWH4ygZv5x+4RTYOBxNG1e3uZlHLRJKCEsWNUBck7pomdnkZwzAc/Z/SV+T10BNlFEC0uypjVTFAq1/K1aH0O456SAXIx/R0MBTfrGng7rNMupAg13AgVEa1mDmnq4kQiwxnyAzHmXZ8QqOPcgfhzvC+HxOjbfGTiQVpdHBmqZgS7p7v+D6oFaQnVmd5+O5JxbyLv26MmlIcxVs03AmVJ69yJMTg4KRv19qI4sd6GO/gqWKTe5jPlBk1C6jQpNawrVmASstUpZvPqnf7WgY1ev7AbNT7k5ltEWOhZ1auuDTqfIxOU9EvWWVSo7UU823XUddNW5mVKwzh5PjrVQ=
-
-stages:
-  - name: verify
-    if: tag IS NOT present
-  - name: build
-    if: tag IS NOT present
-  - name: build & deploy
-    if: tag IS present
-
-jobs:
-  include:
-  - stage: verify
-    script:
-      - npm run e2e
-  - script:
-      - npm run test:ci
-  - script:
-      - npm run lint
-  - stage: build
-    script:
-      - docker build -t cop-watch/portal .
-  - stage: build & deploy
-    script:
-      - ./.travis/create-ecr-configs.sh
-      - pip install --user awscli
-      - export PATH=$PATH:$HOME/.local/bin
-      - eval $(aws ecr get-login --no-include-email --region eu-west-1)
-      - docker build -t 106887332414.dkr.ecr.eu-west-1.amazonaws.com/cop-watch/portal:$TRAVIS_TAG .
-      - docker push 106887332414.dkr.ecr.eu-west-1.amazonaws.com/cop-watch/portal:$TRAVIS_TAG
+- docker
+script:
+- npm run e2e
+- npm run test:ci
+- npm run lint
+- docker build -t cop-watch/portal .
+deploy:
+  provider: elasticbeanstalk
+  access_key_id: AKIAIARLGWZLJY5VKNFA
+  secret_access_key:
+    secure: IQjdcdtiXN1jLOLUNy883nlyQVSr9FQyC3yjs4bNm9EwF8Vq7IzuR8RmJV86JHQkcJmbhtS9qcuzFb8TiQnSXWJVMMdaFsB0Xv/h2LiY6k6jQT0Rtf8T3/WdHOBjF8FG30CmuMJGxw9i1cJZUrIXe4BsOSsbJ91WCmPxungdbJb/dDPRXY2PsdnTuz6C1yRNGZeLus7+zyBX9tOV/ZaovDdI/1D53E0hTJ4jC0OOJARUbG83OXlPpxBdDayvkTjZCQK8bfHqlhKbk4wQRD8kSdOdVR2Hbu7uuI3tN7H+OVhtGp2wO7lC9gjRzRLnp3+RqFDap4JUZ3zYI84Gc809GQ7QEwUbACouBuut4h+p6H/CQVQ8R3prSYzIqo4qVhYMItEjtVvuKmMtPfrO/EwoDU00JINDgE2l8gxPm2YWoV2o5jGiphc/aMgtH8ZQLlHYxhwyx7TdYqNvJb3vLxlkWAPJq6scT5kdiIMtPWyfIOyPwPTvvnVC8NSiQX1RmgghnncLMD4f1sGZGDy6g/tRqV9PGsjtIlDSA/CzOxxo+Px5xVY0LKNOmpHgUOC1rURew/InfDVaQGa2VjH/70DNgBu0lHCGEsR7nfTLEeCP+0pIxh3qY233u42pl9sUACyd69+wL2znE0+VUowZ8XUYYtLO24D2CJgMtMjVuNfVdu4=
+  region: eu-west-1
+  app: cop-watch
+  env: cop-watch-production
+  on:
+    tags: true
