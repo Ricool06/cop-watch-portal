@@ -40,12 +40,8 @@ jobs:
     script:
       - docker build -t cop-watch/portal .
   - stage: build & deploy
-    env:
-      # AWS_ACCESS_KEY_ID
-      - secure: g08tVZkQS0m2P17Xlm7sGxlpwCb5gRObePbLSvB2Z8nKRORqvoVxmtif2wqA8Th/7Uu2CrMvWK0ZSNbrVw+R+y89XqCL8K7vj3U5x2URXga5jFE1S3jtMgKO4s9CiJ0nnVe9LQ1De3Dd9kHeoeEnUwaQLDINCeMSM5z4GStZG5OI3PP0kkP0l3sp9nyIdUqwiQWVonTpNykvsqg4fPrnCRyNwTmswioIBGJpko/ulawJtQvBot1hRNM7TMJ/KRrltRfilXBEgAYYrYGNgtmx+Adb9UW4o7X0B6UbNXJKMzQH0+j9oO3223uyVn2RbCMfQ0D7rXOp8ZvLM25bWrJMONX9j8qxwg7QCUfizvaqiebjoELuAJNuyTYQsiZAIfm547BPJNPvc9QK2vdou0b1UBWY7AyCtZgtbhVPXb+3ot5lOsza/Fv7u6iZm8V36xDzcJ//g7XnGtve2lhyRvqNv+e9alkS+3ig4W7YfMjd+yVTzmTRXEo7d43XgItyasJWACbqgLpkwVSp8DSdH2Y3sbcYGBMjsnZ1OSNN2uKLsdLuaPsjwtkMZ94/bF2g78b608sL8fEVxMwPoNG9JtJNdqDk970uPNu9oMMdnqU/3c1qe8mmYBnssNwFc4ARUWRQJ3gmBlD/ElHtbZZpT5vamQxVswHBkoAjHYXIcWwlybE=
-      # AWS_SECRET_ACCESS_KEY
-      - secure: I4VV7CBWhAOnWsGjNASqVrLEJ2JIjIT00R8gJ7JswyOfqS0cgKS3qCnHnuRrr8lHe89nV8coOp/7zdfMMpLp/S+NLkw1/cAkXBA+tAGn0e1JvwGCq1bOXbldPgRb6rH1mM3sblosJ8STDjdPwwjoTfKBn95MT2W2TTkZTFTBwTLRH5mF95rLlejWnWqpInffis04BLuSbef9AQnYcJ1/J8n8K4CJhAyELssFIZR1imwQdjnrtOcKaTmmPPtyvRzQ+Xy+cIHnPK9xnl++/89K7TpRJUNlzHtDk8P/OAgJgo2vQ1h92w9GS6SM1tQHxJUbkjzvJCkDOJWg1IuplKu+D14fOWWH4ygZv5x+4RTYOBxNG1e3uZlHLRJKCEsWNUBck7pomdnkZwzAc/Z/SV+T10BNlFEC0uypjVTFAq1/K1aH0O456SAXIx/R0MBTfrGng7rNMupAg13AgVEa1mDmnq4kQiwxnyAzHmXZ8QqOPcgfhzvC+HxOjbfGTiQVpdHBmqZgS7p7v+D6oFaQnVmd5+O5JxbyLv26MmlIcxVs03AmVJ69yJMTg4KRv19qI4sd6GO/gqWKTe5jPlBk1C6jQpNawrVmASstUpZvPqnf7WgY1ev7AbNT7k5ltEWOhZ1auuDTqfIxOU9EvWWVSo7UU823XUddNW5mVKwzh5PjrVQ=
     script:
+      - ./.travis/create-ecr-configs
       - pip install --user awscli
       - export PATH=$PATH:$HOME/.local/bin
       - eval $(aws ecr get-login --no-include-email --region eu-west-1)
