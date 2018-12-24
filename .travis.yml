@@ -16,15 +16,24 @@ env:
   # AWS_SECRET_ACCESS_KEY
   - secure: I4VV7CBWhAOnWsGjNASqVrLEJ2JIjIT00R8gJ7JswyOfqS0cgKS3qCnHnuRrr8lHe89nV8coOp/7zdfMMpLp/S+NLkw1/cAkXBA+tAGn0e1JvwGCq1bOXbldPgRb6rH1mM3sblosJ8STDjdPwwjoTfKBn95MT2W2TTkZTFTBwTLRH5mF95rLlejWnWqpInffis04BLuSbef9AQnYcJ1/J8n8K4CJhAyELssFIZR1imwQdjnrtOcKaTmmPPtyvRzQ+Xy+cIHnPK9xnl++/89K7TpRJUNlzHtDk8P/OAgJgo2vQ1h92w9GS6SM1tQHxJUbkjzvJCkDOJWg1IuplKu+D14fOWWH4ygZv5x+4RTYOBxNG1e3uZlHLRJKCEsWNUBck7pomdnkZwzAc/Z/SV+T10BNlFEC0uypjVTFAq1/K1aH0O456SAXIx/R0MBTfrGng7rNMupAg13AgVEa1mDmnq4kQiwxnyAzHmXZ8QqOPcgfhzvC+HxOjbfGTiQVpdHBmqZgS7p7v+D6oFaQnVmd5+O5JxbyLv26MmlIcxVs03AmVJ69yJMTg4KRv19qI4sd6GO/gqWKTe5jPlBk1C6jQpNawrVmASstUpZvPqnf7WgY1ev7AbNT7k5ltEWOhZ1auuDTqfIxOU9EvWWVSo7UU823XUddNW5mVKwzh5PjrVQ=
 
-install:
-- npm ci
+stages:
+  - verify
+  - build
+  - name: deploy
+    if: tag IS present AND branch = master
 
 jobs:
   include:
   - stage: verify
-    script: npm run e2e
-  - script: npm run test:ci
-  - script: npm run lint
+    script:
+      - npm ci
+      - npm run e2e
+  - script:
+      - npm ci
+      - npm run test:ci
+  - script:
+      - npm ci
+      - npm run lint
   - stage: build
     script: docker build -t cop-watch/portal .
   - stage: deploy
@@ -36,5 +45,3 @@ jobs:
         - eval $(aws ecr get-login --no-include-email --region eu-west-1)
         - docker tag cop-watch/portal:latest 106887332414.dkr.ecr.eu-west-1.amazonaws.com/cop-watch/portal:latest
         - docker push 106887332414.dkr.ecr.eu-west-1.amazonaws.com/cop-watch/portal:latest
-      on:
-        tags: true
