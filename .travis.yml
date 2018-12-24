@@ -21,8 +21,9 @@ env:
 
 stages:
   - verify
-  - build
-  - name: deploy
+  - name: build
+    if: tag IS NOT present
+  - name: build & deploy
     if: tag IS present
 
 jobs:
@@ -35,11 +36,12 @@ jobs:
   - script:
       - npm run lint
   - stage: build
-    script: docker build -t cop-watch/portal .
+    script:
+      - docker build -t cop-watch/portal .
   - stage: deploy
     script:
       - pip install --user awscli
       - export PATH=$PATH:$HOME/.local/bin
       - eval $(aws ecr get-login --no-include-email --region eu-west-1)
-      - docker tag cop-watch/portal:latest 106887332414.dkr.ecr.eu-west-1.amazonaws.com/cop-watch/portal:$TRAVIS_TAG
+      - docker build -t 106887332414.dkr.ecr.eu-west-1.amazonaws.com/cop-watch/portal:$TRAVIS_TAG .
       - docker push 106887332414.dkr.ecr.eu-west-1.amazonaws.com/cop-watch/portal:$TRAVIS_TAG
