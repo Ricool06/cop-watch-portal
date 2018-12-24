@@ -11,15 +11,16 @@ script:
 - npm run e2e
 - npm run test:ci
 - npm run lint
-- docker build -t cop-watch/portal .
+- docker build -t cop-watch-portal .
 deploy:
-  provider: elasticbeanstalk
-  access_key_id: AKIAJ5RW7SQ4ABJPTLXA
-  secret_access_key:
-    secure: Yqds1jwij2GEfw4DKEdJfJU+BqTordlWyLto4xUXP+GQ9ANDl06NcPyp8zRBSFIEmBnLzYspxCudgEX1kzAMNm5Lv/1rTjovuOoD7cb1Dzv5BicH3zN0UzgEQJsrfvjr35n1taA2ZVZq5VxrqcN0hO0nGIE54xZKZEO6VZcBzznuOzpheU0kSZj1yKdLHFdy2V/MIMObnxThHFZd9OW9tImuwhd+J7VNWZAuiF/eewXdkB+i/z/c94zqdntgoA/04wAS2DjTgXaHvSYkAecpK7yLS85pIx2Gj4CtBSUpdmHE6sxA2eQ4YoVqd9AcxZyNbd78irtgX1HxOlX5IG6eIFRf96tsU0xFDGzr1pd1bU0ZrwcTnPuOiHvx2D03sozEqzOqrC1xxOqIroTwrpNPbpNkHjzL5TFpwiLs8L/kB8CMOCtR2FiMyjvVBigAzhpw/AgBrJvdkgVwwlYGpTKZ2zPPx2al2EDQDig3n0gtqZzqKVhUIWBKfeoJ51P9vrosu5d8z/32HtgJ86R6KB4W1th3JM4FKHMd9HZwkQxaQ6KdgCxkwv/apjmPkosQzFw8xDyUYh/8l9f4XiVp2LMiF+B7PSx1WsrBZAbywL7lYOUnV6Hz6cjIYpXgmfz4OIsrx1jvCW9ruO8Jy46uMo8g4GhCOz/RhaiGNqPJYN6uqIA=
-  region: eu-west-1
-  app: cop-watch
-  env: cop-watch-production
-  bucket_name: elasticbeanstalk-eu-west-1-106887332414
+  provider: script
+  script:
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  - docker tag cop-watch-portal:latest $DOCKER_USERNAME/cop-watch-portal:$TRAVIS_TAG
+  - docker push $DOCKER_USERNAME/cop-watch-portal:$TRAVIS_TAG
   on:
     tags: true
+env:
+  global:
+  - secure: mbj50j1KqEtFR3xeGvLxI9JOPCdO2841JSPaZfdCQ2NdjURFtmfagx5hCBYWk1ZYsrdVlmRYWd5XGHumNJ6joelHL69wuogl6KCFBulmHAHl0nYnypD6p9NzeuFcJgAE3nEr6ls/S5dzdIkPYkVGd54pl1joUBIyl+VK+EfwxWmS5ici9VYNCBSmpUSW27jGmZUtVKEofh+c5fcZvUqjDo4WBDQ6Lk1w3ocJPS+Vj5sabNu0+qtu/6rq9xVm7p6jhmebFPKsrN/awnCAY2aBm36TibXFdl82eT5eR01WJKB0ZJmepGo/h0dlXIgV3pPW16cPcCO0vR326Ns/AHSYelCnfnIF+eBS+NwaV79HKcyrUs79lpP6DWzhHgLZVHui2akPu4vq0ivZW5HkOaYVAEdfijdodtNjjlyNusEaYNvVWXZwowdpSPP0TwD3vWsZ3YRSV1SnFBb1XeE+pUbLS6YRjIag+aidJpjO2efL/87fy2adW19y2lRJvUUnpS367vFUPBDpkEyp+QaeAArc8wqMO+e7K/nhEcyyRR0rDChQPjwQqTE4A68uDIVNc/nKobZpUceURA/YQRuTFpRoNPlJA4LsT4pgLNehI+pzeiMu3f6wannJiQkma685PSj7DH8qb8hjzt5gXoKtfbTtQqu5dKFQVyEswZENaExs250=
+  - secure: MdOgblZ2v2660W8CP7pus9rE6bCHXQIXRz5/NM0/1nzMPSpwa4EESAS7sfMu/Mk4MNm4jjpsKUozEjLYaS9ixtt31Vf4v5MJvWfydft+nU69t3HQx/K9GzcKjqeaNElhkqh2XNYcvmzI0fTiXht4V9pvKoj3NEcnK4PKVR8MGpdzS9p7BTLmWKHy9KULY15cN2OJ3WeLWTcGmk53hGInXHFEVRdGE9fZFeiMAxEkp1d/E2wYywrntODb+brtnGFOmibLlO3aXrwzmGRzPFSaeUyPqloYMIkEYnclCBT6L70UMMfGr2KbJ/IkzwbJGqE4BhzcAflKc/canYkk2DrkGx3dE1wk6aOmsgI4EtoxMaR9HzO7v8JxGkpQlawSEt/K6VoQfG2H+4pb2ydjyAi9F/c20f2eHvXckaDubWCU7vNtRpYNlSKi0sWwm6G34GgFM85fX9IGDTbo2Z7NRiGYZLjNMTPBK08m9QEo3DqTov3jetUie0BUwz7OuODfJeg9Ng+cWrIbDZVHdxIpFXe+eNiAdqw5JcAnpHKxDVKtSsOcU+CAQKkQGrhnJIoErDJaEs7FiGDc0WMGWS11mkHjwrdu6fV6cpB5Zb5culCqZTjuCVJlCW4KBPjwri47nzM54He30G8NWSbivowv5NF0Rltrr+2Q0gNDCShSuBntb5E=
