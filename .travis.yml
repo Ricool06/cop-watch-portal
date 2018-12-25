@@ -19,6 +19,3 @@ deploy:
   script: docker push $DOCKER_USERNAME/cop-watch-portal:$TRAVIS_TAG
   on:
     tags: true
-env:
-  global:
-    - secure: aVBMj5eBvvWuD3F8zvsmhph4yQAvv+BOKuKg51tXkO9HsMuoK8Tqf3+NA+8eVMtgsSRCzksoFte2VAQPLiymZf5DPBRsl+W8pATx1ZhkeB0uyZcM/OVjd++fGbDqHMHr7L1Bng2WOD4VdiKpfuWfbLk6yDs3rmXEPWZOlsSDB0KLsSp/t8hsQAl9SgPoH14H/qVURWHm1eKLYt0ZxzqhsHQY0JKJU9BABC4J7RPLyC0sRtr09e1oMFFfybucSNxrotrwMsj+Mv7OupZ0zH30Dc/3x6yt9OeQooe8QJO2TDr+JiUNyM97vQCOYNzoMYD9j84k7S0OQSIwh03DX85Ff262l6uVHZiL3ymxuaS7CSgXlCNUVn2KasgAO5p2Yg6lKvEAcV6xryYm+IEsh59puXentnxNCi6xpYK9vW1Tg/9opykN5pUfvvOqKIoN+QqjaKb8pT2GCMgEcKkV7zGi8ByCgKExHDQFaqY/se8PdPa/AKHB2bfSuxmh0BF1ivTgeTx16xgjWazQUOpCh3z4E6oVkAFoez1nB2Ogqmjb2eUYdNNErZrjLV+j7GU+/wN/VDQAsmW3RxT2kTSFq7gqVIYPmtlbGD6vBd9kiUb03SUrQo5Rf/qy6CduvnHGNBF4f7m0KBXL0Jpt1ifk0Z8+00p+DZVBpyNRQcHKZZ9fz4Y=
