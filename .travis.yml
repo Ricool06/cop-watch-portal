@@ -18,4 +18,4 @@ deploy:
   provider: script
   script: docker push $DOCKER_USERNAME/cop-watch-portal:$TRAVIS_TAG
   on:
-    condition: branch = master AND tag IS present
+    tags: true
