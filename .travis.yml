@@ -11,11 +11,11 @@ script:
 - npm run e2e
 - npm run test:ci
 - npm run lint
-- docker build -t $DOCKER_USERNAME/cop-watch-portal:${TRAVIS_TAG:=latest} .
+- docker build -t $DOCKER_USERNAME/cop-watch-portal:${TRAVIS_TAG:-latest} .
 before_deploy:
 - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
 deploy:
   provider: script
   script: docker push $DOCKER_USERNAME/cop-watch-portal:$TRAVIS_TAG
   on:
-    tags: true
+    condition: branch = master AND tag IS present
