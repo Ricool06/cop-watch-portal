@@ -1,6 +1,6 @@
 {
   "name": "portal",
-  "version": "0.0.0",
+  "version": "v0.1-pre.20",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
