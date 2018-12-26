@@ -8,14 +8,15 @@ addons:
 services:
 - docker
 script:
+- export IMAGE_TAG=$DOCKER_USERNAME/cop-watch-portal:`node -p "require('./package.json').version"`
 - npm run e2e
 - npm run test:ci
 - npm run lint
-- docker build -t $DOCKER_USERNAME/cop-watch-portal:${TRAVIS_TAG:-latest} .
+- docker build -t $IMAGE_TAG .
 before_deploy:
 - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
 deploy:
   provider: script
-  script: docker push $DOCKER_USERNAME/cop-watch-portal:$TRAVIS_TAG
+  script: docker push $IMAGE_TAG
   on:
-    tags: true
+    branch: master
