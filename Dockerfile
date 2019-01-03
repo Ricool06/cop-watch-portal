@@ -11,3 +11,6 @@ WORKDIR /usr/share/nginx/html
 RUN rm -rf ./*
 COPY --from=builder /app/dist .
 EXPOSE 8080
+LABEL traefik.enable="true" \
+      traefik.frontend.rule="Host:localhost,cop-watch-production-environment.egbk2sq3vn.eu-west-1.elasticbeanstalk.com" \
+      traefik.port=8080
