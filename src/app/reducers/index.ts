@@ -7,9 +7,14 @@ import {
 import * as fromStopAndSearches from './stop-and-searches.reducer';
 
 export interface State {
-  stopAndSearches: fromStopAndSearches.State;
+  stopAndSearchState: fromStopAndSearches.StopAndSearchState;
 }
 
 export const reducers: ActionReducerMap<State> = {
-  stopAndSearches: fromStopAndSearches.reducer,
+  stopAndSearchState: fromStopAndSearches.reducer,
 };
+
+export const selectStopAndSearches = createSelector(
+  (state: State) => state.stopAndSearchState,
+  (state: fromStopAndSearches.StopAndSearchState) => state.stopAndSearches,
+);

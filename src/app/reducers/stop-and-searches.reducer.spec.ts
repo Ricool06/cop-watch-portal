@@ -1,4 +1,4 @@
-import { reducer, initialState, State } from './stop-and-searches.reducer';
+import { reducer, initialState, StopAndSearchState } from './stop-and-searches.reducer';
 import { GetStopAndSearchDataSuccess } from '../actions/stop-and-search-data';
 import { StopAndSearch } from '../model/stop-and-search';
 import { LatLng } from 'leaflet';
@@ -24,7 +24,7 @@ describe('StopAndSearches Reducer', () => {
 
       const action = new GetStopAndSearchDataSuccess(mockStopAndSearches);
 
-      const newState: State = reducer(initialState, action);
+      const newState: StopAndSearchState = reducer(initialState, action);
 
       expect(newState.stopAndSearches).toBe(mockStopAndSearches);
     });

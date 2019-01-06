@@ -1,15 +1,15 @@
 import { StopAndSearch } from '../model/stop-and-search';
 import { ActionTypes, GetStopAndSearchDataAction } from '../actions/stop-and-search-data';
 
-export interface State {
+export interface StopAndSearchState {
   stopAndSearches: StopAndSearch[];
 }
 
-export const initialState: State = {
+export const initialState: StopAndSearchState = {
   stopAndSearches: [],
 };
 
-export function reducer(state = initialState, action: GetStopAndSearchDataAction): State {
+export function reducer(state = initialState, action: GetStopAndSearchDataAction): StopAndSearchState {
   switch (action.type) {
     case (ActionTypes.GetStopAndSearchDataSuccess):
       return {
