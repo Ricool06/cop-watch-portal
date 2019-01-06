@@ -1,6 +1,6 @@
 import { Action } from '@ngrx/store';
-import { StopAndSearch } from '../reducers';
 import { LatLngBounds } from 'leaflet';
+import { StopAndSearch } from '../model/stop-and-search';
 
 export enum ActionTypes {
   GetStopAndSearchData = '[StopsStreetService] GetStopAndSearchData',
@@ -25,3 +25,8 @@ export class GetStopAndSearchDataSuccess implements Action {
 
   constructor(public payload: StopAndSearch[]) {}
 }
+
+export type GetStopAndSearchDataAction =
+  GetStopAndSearchData |
+  GetStopAndSearchDataFailure |
+  GetStopAndSearchDataSuccess;

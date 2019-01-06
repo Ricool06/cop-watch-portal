@@ -6,12 +6,12 @@ import {
   GetStopAndSearchData,
   GetStopAndSearchDataSuccess,
   GetStopAndSearchDataFailure,
+  GetStopAndSearchDataAction,
 } from '../actions/stop-and-search-data';
 import { switchMap, map, catchError } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
-import { Action } from '@ngrx/store';
-import { StopAndSearch } from '../reducers';
 import { LatLngBounds } from 'leaflet';
+import { StopAndSearch } from '../model/stop-and-search';
 
 @Injectable()
 export class StopAndSearchEffects {
@@ -19,7 +19,7 @@ export class StopAndSearchEffects {
   constructor(private actions$: Actions, private stopsStreetService: StopsStreetService) { }
 
   @Effect()
-  getStopAndSearchData$: Observable<Action> = this.actions$.pipe(
+  getStopAndSearchData$: Observable<GetStopAndSearchDataAction> = this.actions$.pipe(
     ofType(ActionTypes.GetStopAndSearchData),
     map((action: GetStopAndSearchData) => action.payload),
     switchMap((payload: LatLngBounds) => {

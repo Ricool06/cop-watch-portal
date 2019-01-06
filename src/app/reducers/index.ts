@@ -4,20 +4,12 @@ import {
   createFeatureSelector,
   createSelector,
 } from '@ngrx/store';
-import { LatLng } from 'leaflet';
-
-export interface Location {
-  latLng: LatLng;
-}
-
-export interface StopAndSearch {
-  location: Location;
-}
+import * as fromStopAndSearches from './stop-and-searches.reducer';
 
 export interface State {
-  stopAndSearches: StopAndSearch[];
+  stopAndSearches: fromStopAndSearches.State;
 }
 
-// export const reducers: ActionReducerMap<State> = {
-
-// };
+export const reducers: ActionReducerMap<State> = {
+  stopAndSearches: fromStopAndSearches.reducer,
+};

@@ -4,7 +4,7 @@ import { LatLngBounds, LatLng } from 'leaflet';
 import { flatMap, toArray, map } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { from, Observable } from 'rxjs';
-import { StopAndSearch } from '../reducers';
+import { StopAndSearch } from '../model/stop-and-search';
 
 @Injectable({
   providedIn: 'root',
