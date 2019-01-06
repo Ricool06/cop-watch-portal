@@ -4,13 +4,13 @@ import { StopsStreetService } from './stops-street.service';
 import { LatLngBounds, LatLng } from 'leaflet';
 import { environment } from '../../environments/environment';
 
-fdescribe('Service: StopsStreet', () => {
+describe('Service: StopsStreet', () => {
   let httpMock: HttpTestingController;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
-      providers: [StopsStreetService]
+      providers: [StopsStreetService],
     });
 
     httpMock = TestBed.get(HttpTestingController);
@@ -28,11 +28,11 @@ fdescribe('Service: StopsStreet', () => {
       bounds.getSouthWest(),
       bounds.getNorthWest(),
       bounds.getNorthEast(),
-      bounds.getSouthEast()
+      bounds.getSouthEast(),
     ];
 
     const expectedPolyString = expectedPoly
-      .map((currentLatLng: LatLng) => currentLatLng.lat + ',' + currentLatLng.lng)
+      .map((currentLatLng: LatLng) => `${currentLatLng.lat},${currentLatLng.lng}`)
       .join(':');
 
     const mockResponse = [
@@ -43,13 +43,13 @@ fdescribe('Service: StopsStreet', () => {
       {
         latitude: '50.688224',
         longitude: '-3.94',
-      }
+      },
     ];
 
     const expectedResult = mockResponse.map((stopAndSearch: any) => {
       return {
         location: {
-          latLng: new LatLng(Number(stopAndSearch.latitude), Number(stopAndSearch.longitude))
+          latLng: new LatLng(Number(stopAndSearch.latitude), Number(stopAndSearch.longitude)),
         },
       };
     });

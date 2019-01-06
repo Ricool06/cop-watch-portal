@@ -17,7 +17,7 @@ export class GetStopAndSearchData implements Action {
 export class GetStopAndSearchDataFailure implements Action {
   readonly type = ActionTypes.GetStopAndSearchDataFailure;
 
-  constructor(public payload: Error) {}
+  constructor(public payload: string) {}
 }
 
 export class GetStopAndSearchDataSuccess implements Action {

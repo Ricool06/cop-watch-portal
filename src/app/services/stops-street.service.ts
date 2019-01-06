@@ -7,7 +7,7 @@ import { from, Observable } from 'rxjs';
 import { StopAndSearch } from '../reducers';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class StopsStreetService {
 
@@ -18,7 +18,7 @@ export class StopsStreetService {
 
     return this.httpClient.get(
       `${environment.apiUrl}/graphql?query=${polyString}`,
-      { headers: {'X-Event-Type': 'police-data'} },
+      { headers: { 'X-Event-Type': 'police-data' } },
     ).pipe(
       flatMap((stops: any[]) => from(stops)),
       map(stopAndSearchFromApi => this.convertApiStopAndSearchToModelStopAndSearch(stopAndSearchFromApi)),
@@ -31,8 +31,8 @@ export class StopsStreetService {
       latLngBounds.getSouthWest(),
       latLngBounds.getNorthWest(),
       latLngBounds.getNorthEast(),
-      latLngBounds.getSouthEast()
-    ].map((currentLatLng: LatLng) => currentLatLng.lat + ',' + currentLatLng.lng)
+      latLngBounds.getSouthEast(),
+    ].map((currentLatLng: LatLng) => `${currentLatLng.lat},${currentLatLng.lng}`)
     .join(':');
   }
 
@@ -41,8 +41,8 @@ export class StopsStreetService {
       location: {
         latLng: new LatLng(
           Number(stopAndSearchFromApi.latitude),
-          Number(stopAndSearchFromApi.longitude)
-        )
+          Number(stopAndSearchFromApi.longitude),
+        ),
       },
     };
   }

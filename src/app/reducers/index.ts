@@ -3,7 +3,6 @@ import {
   ActionReducerMap,
   createFeatureSelector,
   createSelector,
-  MetaReducer
 } from '@ngrx/store';
 import { LatLng } from 'leaflet';
 

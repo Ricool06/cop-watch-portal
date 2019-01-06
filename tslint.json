@@ -2,7 +2,14 @@
   "rulesDirectory": [
     "codelyzer"
   ],
+  "extends": [
+    "tslint-config-airbnb",
+    "tslint-jasmine-rules"
+  ],
   "rules": {
+    "no-focused-tests": true,
+    "no-disabled-tests": true,
+    "expect-length": true,
     "arrow-return-shorthand": true,
     "callable-types": true,
     "class-name": true,
