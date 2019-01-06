@@ -6,8 +6,8 @@ import { Component, Output, EventEmitter, Input } from '@angular/core';
 import { MapComponent } from './map.component';
 import { StoreModule, Store } from '@ngrx/store';
 import { State } from 'src/app/reducers';
-import * as fromRoot from '../../reducers';
-import * as ActionsModule from '../../actions/stop-and-search-data';
+import * as fromRoot from '../../../reducers';
+import * as ActionsModule from '../../../actions/stop-and-search-data';
 import { LatLngBounds, LatLng } from 'leaflet';
 import { StopAndSearch } from 'src/app/model/stop-and-search';
 
