@@ -13,7 +13,7 @@ export class MapPage {
 
   waitForMarkersToAppear() {
     const until = protractor.ExpectedConditions;
-    return browser.wait(until.presenceOf($(this.firstMarkerSelector)), 20000, 'Markers taking too long to appear');
+    return browser.wait(until.presenceOf($(this.firstMarkerSelector)), 5000, 'Markers taking too long to appear');
   }
 
   clickAMarker() {
