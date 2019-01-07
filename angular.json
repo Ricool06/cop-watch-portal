@@ -9,6 +9,9 @@
       "projectType": "application",
       "prefix": "app",
       "schematics": {
+        "@ngrx/schematics:component": {
+          "styleext": "scss"
+        },
         "@schematics/angular:component": {
           "styleext": "scss"
         }
@@ -27,7 +30,8 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles.scss"
+              "src/styles.scss",
+              "./node_modules/leaflet/dist/leaflet.css"
             ],
             "scripts": []
           },
@@ -135,5 +139,8 @@
       }
     }
   },
-  "defaultProject": "portal"
+  "defaultProject": "portal",
+  "cli": {
+    "defaultCollection": "@ngrx/schematics"
+  }
 }
