@@ -10,8 +10,9 @@ import { environment } from '../environments/environment';
 import { EffectsModule } from '@ngrx/effects';
 import { StopAndSearchEffects } from './effects/stop-and-search.effects';
 import { MapViewComponent } from './components/presentational/map-view/map-view.component';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { MapComponent } from './components/smart/map/map.component';
+import { BaseUrlInterceptor } from './interceptors/base-url.interceptor';
 
 @NgModule({
   declarations: [AppComponent, MapComponent, MapViewComponent],
@@ -23,7 +24,11 @@ import { MapComponent } from './components/smart/map/map.component';
     !environment.production ? StoreDevtoolsModule.instrument() : [],
     EffectsModule.forRoot([StopAndSearchEffects]),
   ],
-  providers: [],
+  providers: [{
+    provide: HTTP_INTERCEPTORS,
+    useClass: BaseUrlInterceptor,
+    multi: true,
+  }],
   bootstrap: [AppComponent],
 })
 export class AppModule { }

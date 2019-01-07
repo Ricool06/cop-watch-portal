@@ -58,7 +58,7 @@ describe('Service: StopsStreet', () => {
       expect(data).toEqual(expectedResult);
     });
 
-    const requester = httpMock.expectOne(`${environment.apiUrl}/graphql?query=${expectedPolyString}`);
+    const requester = httpMock.expectOne(`/graphql?query=${expectedPolyString}`);
     expect(requester.request.method).toBe('GET');
     expect(requester.request.headers.get('X-Event-Type')).toBe('police-data');
 

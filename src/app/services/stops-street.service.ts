@@ -17,7 +17,7 @@ export class StopsStreetService {
     const polyString = this.convertLatLngBoundsToPolyString(latLngBounds);
 
     return this.httpClient.get(
-      `${environment.apiUrl}/graphql?query=${polyString}`,
+      `/graphql?query=${polyString}`,
       { headers: { 'X-Event-Type': 'police-data' } },
     ).pipe(
       flatMap((stops: any[]) => from(stops)),
