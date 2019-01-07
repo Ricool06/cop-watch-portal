@@ -86,17 +86,28 @@ describe('MapViewComponent', () => {
     });
   });
 
-  it('should place markers at stop and search locations every time they update', () => {
+  it('should place markers at stop and search locations every time they update, and use the correct icon', () => {
     const mockStopAndSearches: StopAndSearch[] = [
       { location: { latLng: new L.LatLng(1, 1) } },
       { location: { latLng: new L.LatLng(2, 2) } },
     ];
+    const expectedMarkerOptions = {
+      icon: L.icon({
+        iconSize: [25, 41],
+        iconAnchor: [13, 41],
+        iconUrl: 'assets/marker-icon.png',
+        shadowUrl: 'assets/marker-shadow.png',
+      }),
+    };
 
     let marker: L.Marker;
 
     const realLMarkerFunc = L.marker;
     const markers = [];
+
     spyOn(L, 'marker').and.callFake((...args) => {
+      expect(args[1]).toEqual(expectedMarkerOptions);
+
       marker = realLMarkerFunc(args[0], args[1]);
       spyOn(marker, 'addTo');
       markers.push(marker);

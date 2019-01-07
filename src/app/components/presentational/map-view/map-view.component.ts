@@ -21,8 +21,18 @@ export class MapViewComponent implements OnInit, OnChanges {
   // this is tech debt.
   public leafletMap: L.Map;
   private markers: L.Marker[] = [];
+  private markerOptions: L.MarkerOptions;
 
-  constructor() { }
+  constructor() {
+    this.markerOptions = {
+      icon: L.icon({
+        iconSize: [25, 41],
+        iconAnchor: [13, 41],
+        iconUrl: 'assets/marker-icon.png',
+        shadowUrl: 'assets/marker-shadow.png',
+      }),
+    };
+  }
 
   ngOnInit() {
     this.leafletMap = L.map('map').setView([51.505, -0.09], 13);
@@ -43,7 +53,7 @@ export class MapViewComponent implements OnInit, OnChanges {
 
     this.markers.map((marker: L.Marker) => this.leafletMap.removeLayer(marker));
     newStopAndSearches.map((stopAndSearch: StopAndSearch) => {
-      this.markers.push(L.marker(stopAndSearch.location.latLng).addTo(this.leafletMap));
+      this.markers.push(L.marker(stopAndSearch.location.latLng, this.markerOptions).addTo(this.leafletMap));
     });
   }
 }
