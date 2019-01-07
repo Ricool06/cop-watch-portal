@@ -96,8 +96,8 @@ describe('MapViewComponent', () => {
         iconSize: [25, 41],
         iconAnchor: [13, 41],
         iconUrl: 'assets/marker-icon.png',
-        shadowUrl: 'assets/marker-shadow.png'
-      })
+        shadowUrl: 'assets/marker-shadow.png',
+      }),
     };
 
     let marker: L.Marker;
