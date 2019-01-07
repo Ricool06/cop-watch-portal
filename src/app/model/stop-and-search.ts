@@ -7,3 +7,12 @@ export interface Location {
 export interface StopAndSearch {
   location: Location;
 }
+
+export interface LatLngStrings {
+  latitude: string;
+  longitude: string;
+}
+
+export interface ApiStopAndSearch {
+  location: LatLngStrings;
+}

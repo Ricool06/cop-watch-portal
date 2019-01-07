@@ -2,9 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { LatLngBounds, LatLng } from 'leaflet';
 import { flatMap, toArray, map } from 'rxjs/operators';
-import { environment } from '../../environments/environment';
 import { from, Observable } from 'rxjs';
-import { StopAndSearch } from '../model/stop-and-search';
+import { StopAndSearch, ApiStopAndSearch } from '../model/stop-and-search';
 
 @Injectable({
   providedIn: 'root',
@@ -17,10 +16,11 @@ export class StopsStreetService {
     const polyString = this.convertLatLngBoundsToPolyString(latLngBounds);
 
     return this.httpClient.get(
-      `/graphql?query=${polyString}`,
+      `/graphql?query={stopsStreet(poly: "${polyString}"){location{latitude longitude}}}`,
       { headers: { 'X-Event-Type': 'police-data' } },
     ).pipe(
-      flatMap((stops: any[]) => from(stops)),
+      map((data: any) => data.data.stopsStreet),
+      flatMap((stops: ApiStopAndSearch[]) => from(stops)),
       map(stopAndSearchFromApi => this.convertApiStopAndSearchToModelStopAndSearch(stopAndSearchFromApi)),
       toArray(),
     );
@@ -36,12 +36,12 @@ export class StopsStreetService {
     .join(':');
   }
 
-  private convertApiStopAndSearchToModelStopAndSearch(stopAndSearchFromApi: any): StopAndSearch {
+  private convertApiStopAndSearchToModelStopAndSearch(stopAndSearchFromApi: ApiStopAndSearch): StopAndSearch {
     return {
       location: {
         latLng: new LatLng(
-          Number(stopAndSearchFromApi.latitude),
-          Number(stopAndSearchFromApi.longitude),
+          Number(stopAndSearchFromApi.location.latitude),
+          Number(stopAndSearchFromApi.location.longitude),
         ),
       },
     };

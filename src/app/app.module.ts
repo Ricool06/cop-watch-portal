@@ -21,7 +21,9 @@ import { BaseUrlInterceptor } from './interceptors/base-url.interceptor';
     HttpClientModule,
     AppRoutingModule,
     StoreModule.forRoot(reducers),
-    !environment.production ? StoreDevtoolsModule.instrument() : [],
+    !environment.production ? StoreDevtoolsModule.instrument({
+      maxAge: 25,
+    }) : [],
     EffectsModule.forRoot([StopAndSearchEffects]),
   ],
   providers: [{

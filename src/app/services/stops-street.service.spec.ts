@@ -3,6 +3,7 @@ import { HttpClientTestingModule, HttpTestingController } from '@angular/common/
 import { StopsStreetService } from './stops-street.service';
 import { LatLngBounds, LatLng } from 'leaflet';
 import { environment } from '../../environments/environment';
+import { ApiStopAndSearch } from '../model/stop-and-search';
 
 describe('Service: StopsStreet', () => {
   let httpMock: HttpTestingController;
@@ -35,21 +36,31 @@ describe('Service: StopsStreet', () => {
       .map((currentLatLng: LatLng) => `${currentLatLng.lat},${currentLatLng.lng}`)
       .join(':');
 
-    const mockResponse = [
+    const stopsStreet: ApiStopAndSearch[] = [
       {
-        latitude: '50.5',
-        longitude: '-3.892244',
+        location: {
+          latitude: '50.5',
+          longitude: '-3.892244',
+        },
       },
       {
-        latitude: '50.688224',
-        longitude: '-3.94',
+        location: {
+          latitude: '50.688224',
+          longitude: '-3.94',
+        },
       },
     ];
 
-    const expectedResult = mockResponse.map((stopAndSearch: any) => {
+    const mockResponse = {
+      data: {
+        stopsStreet,
+      },
+    };
+
+    const expectedResult = mockResponse.data.stopsStreet.map((stopAndSearch: any) => {
       return {
         location: {
-          latLng: new LatLng(Number(stopAndSearch.latitude), Number(stopAndSearch.longitude)),
+          latLng: new LatLng(Number(stopAndSearch.location.latitude), Number(stopAndSearch.location.longitude)),
         },
       };
     });
@@ -58,7 +69,7 @@ describe('Service: StopsStreet', () => {
       expect(data).toEqual(expectedResult);
     });
 
-    const requester = httpMock.expectOne(`/graphql?query=${expectedPolyString}`);
+    const requester = httpMock.expectOne(`/graphql?query={stopsStreet(poly: "${expectedPolyString}"){location{latitude longitude}}}`);
     expect(requester.request.method).toBe('GET');
     expect(requester.request.headers.get('X-Event-Type')).toBe('police-data');
 

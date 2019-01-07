@@ -41,7 +41,7 @@ export class MapViewComponent implements OnInit, OnChanges {
 
     this.markers.map((marker: L.Marker) => this.leafletMap.removeLayer(marker));
     newStopAndSearches.map((stopAndSearch: StopAndSearch) => {
-      this.markers.push(L.marker(stopAndSearch.location.latLng));
+      this.markers.push(L.marker(stopAndSearch.location.latLng).addTo(this.leafletMap));
     });
   }
 }

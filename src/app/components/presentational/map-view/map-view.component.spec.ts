@@ -92,6 +92,7 @@ describe('MapViewComponent', () => {
     const markers = [];
     spyOn(L, 'marker').and.callFake((...args) => {
       marker = realLMarkerFunc(args[0], args[1]);
+      spyOn(marker, 'addTo');
       markers.push(marker);
       return marker;
     });
@@ -101,5 +102,6 @@ describe('MapViewComponent', () => {
 
     fixture.detectChanges();
     expect(markers.length).toBe(mockStopAndSearches.length);
+    markers.map((thisMarker: L.Marker) => expect(thisMarker.addTo).toHaveBeenCalledWith(component.leafletMap));
   });
 });
