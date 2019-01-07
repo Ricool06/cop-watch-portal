@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, OnChanges, SimpleChanges, AfterViewInit } from '@angular/core';
 import * as L from 'leaflet';
 import { StopAndSearch } from 'src/app/model/stop-and-search';
 
@@ -34,6 +34,8 @@ export class MapViewComponent implements OnInit, OnChanges {
     this.leafletMap.on('moveend', () => {
       this.mapBounds.emit(this.leafletMap.getBounds());
     });
+
+    this.mapBounds.emit(this.leafletMap.getBounds());
   }
 
   ngOnChanges(changes: SimpleChanges) {

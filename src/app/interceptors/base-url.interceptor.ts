@@ -6,6 +6,8 @@ import { environment } from 'src/environments/environment';
 export class BaseUrlInterceptor implements HttpInterceptor {
   intercept(req: HttpRequest<any>, next: HttpHandler) {
     const newReq = req.clone({ url: environment.apiUrl + req.url });
+    console.log('LOOOOOKKKK HEEEERREEE PLEEEEAASEE');
+    console.log(newReq.urlWithParams);
     return next.handle(newReq);
   }
 }

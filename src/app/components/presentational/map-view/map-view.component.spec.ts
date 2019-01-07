@@ -66,9 +66,15 @@ describe('MapViewComponent', () => {
     expect(component.stopAndSearches).toEqual(mockStopAndSearches);
   });
 
+  it('should emit event from mapBounds at startup', () => {
+    fixture.whenStable().then(() => {
+      expect(parentComponent.mapBounds).toBeDefined();
+    });
+  });
+
   it('should emit event from mapBounds when map bounds change', (done) => {
     spyOn(parentComponent, 'onMapBoundsChange');
-    const mockBounds = new L.LatLngBounds([45, 45], [1, 1]);
+    const mockBounds = new L.LatLngBounds([52, 45], [1, 1]);
 
     fixture.whenStable().then(() => {
       component.leafletMap.flyToBounds(mockBounds);
