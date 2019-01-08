@@ -3,6 +3,7 @@ import { MapViewComponent } from './map-view.component';
 import { Component, ViewChild } from '@angular/core';
 import { StopAndSearch } from 'src/app/model/stop-and-search';
 import * as L from 'leaflet';
+import { createStopAndSearch } from 'test-helpers';
 
 @Component({
   selector: 'app-map',
@@ -54,8 +55,8 @@ describe('MapViewComponent', () => {
 
   it('should have a stopAndSearches input', () => {
     const mockStopAndSearches: StopAndSearch[] = [
-      { location: { latLng: new L.LatLng(1, 1) } },
-      { location: { latLng: new L.LatLng(2, 2) } },
+      createStopAndSearch(new L.LatLng(1, 1)),
+      createStopAndSearch(new L.LatLng(2, 2)),
     ];
 
     expect(component.stopAndSearches).toEqual([]);
@@ -88,8 +89,8 @@ describe('MapViewComponent', () => {
 
   it('should place markers at stop and search locations every time they update, and use the correct icon', async () => {
     const mockStopAndSearches: StopAndSearch[] = [
-      { location: { latLng: new L.LatLng(1, 1) } },
-      { location: { latLng: new L.LatLng(2, 2) } },
+      createStopAndSearch(new L.LatLng(1, 1)),
+      createStopAndSearch(new L.LatLng(2, 2)),
     ];
     const expectedMarkerOptions = {
       icon: L.icon({
@@ -124,10 +125,10 @@ describe('MapViewComponent', () => {
 
   it('should conglomerate markers at the same location', () => {
     const identicalStopAndSearches: StopAndSearch[] = [
-      { location: { latLng: new L.LatLng(1, 1) } },
-      { location: { latLng: new L.LatLng(1, 1) } },
-      { location: { latLng: new L.LatLng(1, 1) } },
-      { location: { latLng: new L.LatLng(1, 1) } },
+      createStopAndSearch(new L.LatLng(1, 1)),
+      createStopAndSearch(new L.LatLng(1, 1)),
+      createStopAndSearch(new L.LatLng(1, 1)),
+      createStopAndSearch(new L.LatLng(1, 1)),
     ];
 
     const realLMarkerFunc = L.marker;
@@ -148,8 +149,8 @@ describe('MapViewComponent', () => {
 
   it('should add markers idempotently', async () => {
     const mockStopAndSearches: StopAndSearch[] = [
-      { location: { latLng: new L.LatLng(51.505, -0.09) } },
-      { location: { latLng: new L.LatLng(51.5064, -0.09) } },
+      createStopAndSearch(new L.LatLng(51.505, -0.09)),
+      createStopAndSearch(new L.LatLng(51.5064, -0.09)),
     ];
 
     const realLMarkerFunc = L.marker;
@@ -170,7 +171,7 @@ describe('MapViewComponent', () => {
     expect(markers.length).toBe(2);
 
     parentComponent.stopAndSearches = mockStopAndSearches.concat([
-      { location: { latLng: new L.LatLng(51.5042, -0.09) } },
+      createStopAndSearch(new L.LatLng(51.5042, -0.09)),
     ]);
     spyOn(component.leafletMap, 'removeLayer').and.callThrough();
 
@@ -183,10 +184,10 @@ describe('MapViewComponent', () => {
 
   it('should remove markers not in view', async () => {
     const mockStopAndSearches: StopAndSearch[] = [
-      { location: { latLng: new L.LatLng(1, 1) } },
-      { location: { latLng: new L.LatLng(2, 2) } },
-      { location: { latLng: new L.LatLng(1, 2) } },
-      { location: { latLng: new L.LatLng(51.505, -0.09) } },
+      createStopAndSearch(new L.LatLng(1, 1)),
+      createStopAndSearch(new L.LatLng(2, 2)),
+      createStopAndSearch(new L.LatLng(1, 2)),
+      createStopAndSearch(new L.LatLng(51.505, -0.09)),
     ];
 
     const realLMarkerFunc = L.marker;
@@ -207,7 +208,7 @@ describe('MapViewComponent', () => {
 
     expect(markers.length).toBe(mockStopAndSearches.length);
 
-    parentComponent.stopAndSearches = [{ location: { latLng: new L.LatLng(1, 1) } }];
+    parentComponent.stopAndSearches = [createStopAndSearch(new L.LatLng(1, 1))];
 
     fixture.detectChanges();
     await fixture.whenStable();

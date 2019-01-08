@@ -3,6 +3,7 @@ import { GetStopAndSearchDataSuccess } from '../actions/stop-and-search-data';
 import { StopAndSearch } from '../model/stop-and-search';
 import { LatLng } from 'leaflet';
 import { TestBed } from '@angular/core/testing';
+import { createStopAndSearch } from 'test-helpers';
 
 describe('StopAndSearches Reducer', () => {
   describe('an unknown action', () => {
@@ -18,8 +19,8 @@ describe('StopAndSearches Reducer', () => {
   describe('GetStopAndSearchDataSuccess action', () => {
     it('should set stopAndSearches', () => {
       const mockStopAndSearches: StopAndSearch[] = [
-        { location: { latLng: new LatLng(1, 1) } },
-        { location: { latLng: new LatLng(2, 2) } },
+        createStopAndSearch(new LatLng(1, 1)),
+        createStopAndSearch(new LatLng(2, 2)),
       ];
 
       const action = new GetStopAndSearchDataSuccess(mockStopAndSearches);

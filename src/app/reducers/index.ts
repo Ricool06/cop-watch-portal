@@ -1,9 +1,4 @@
-import {
-  ActionReducer,
-  ActionReducerMap,
-  createFeatureSelector,
-  createSelector,
-} from '@ngrx/store';
+import { ActionReducerMap, createSelector } from '@ngrx/store';
 import * as fromStopAndSearches from './stop-and-searches.reducer';
 
 export interface State {

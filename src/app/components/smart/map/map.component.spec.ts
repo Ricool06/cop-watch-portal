@@ -10,6 +10,7 @@ import * as fromRoot from '../../../reducers';
 import * as ActionsModule from '../../../actions/stop-and-search-data';
 import { LatLngBounds, LatLng } from 'leaflet';
 import { StopAndSearch } from 'src/app/model/stop-and-search';
+import { createStopAndSearch } from 'test-helpers';
 
 @Component({
   selector: 'app-map-view',
@@ -76,8 +77,8 @@ describe('MapComponent', () => {
     expect(mockMapViewComponent.stopAndSearches).toEqual([]);
 
     const mockStopAndSearches: StopAndSearch[] = [
-      { location: { latLng: new LatLng(1, 1) } },
-      { location: { latLng: new LatLng(2, 2) } },
+      createStopAndSearch(new LatLng(1, 1)),
+      createStopAndSearch(new LatLng(2, 2)),
     ];
     const action = new ActionsModule.GetStopAndSearchDataSuccess(mockStopAndSearches);
     store.dispatch(action);

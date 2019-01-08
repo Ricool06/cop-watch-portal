@@ -4,6 +4,7 @@ import { StopsStreetService } from './stops-street.service';
 import { LatLngBounds, LatLng } from 'leaflet';
 import { environment } from '../../environments/environment';
 import { ApiStopAndSearch } from '../model/stop-and-search';
+import { createApiStopAndSearch, createStopAndSearch } from 'test-helpers';
 
 describe('Service: StopsStreet', () => {
   let httpMock: HttpTestingController;
@@ -37,18 +38,14 @@ describe('Service: StopsStreet', () => {
       .join(':');
 
     const stopsStreet: ApiStopAndSearch[] = [
-      {
-        location: {
-          latitude: '50.5',
-          longitude: '-3.892244',
-        },
-      },
-      {
-        location: {
-          latitude: '50.688224',
-          longitude: '-3.94',
-        },
-      },
+      createApiStopAndSearch({
+        latitude: '50.5',
+        longitude: '-3.892244',
+      }),
+      createApiStopAndSearch({
+        latitude: '50.688224',
+        longitude: '-3.94',
+      }),
     ];
 
     const mockResponse = {
@@ -57,13 +54,13 @@ describe('Service: StopsStreet', () => {
       },
     };
 
-    const expectedResult = mockResponse.data.stopsStreet.map((stopAndSearch: any) => {
-      return {
-        location: {
-          latLng: new LatLng(Number(stopAndSearch.location.latitude), Number(stopAndSearch.location.longitude)),
-        },
-      };
-    });
+    const expectedResult = mockResponse.data.stopsStreet
+      .map((apiStopAndSearch: ApiStopAndSearch) => {
+        return new LatLng(
+          Number(apiStopAndSearch.location.latitude),
+          Number(apiStopAndSearch.location.longitude));
+      })
+      .map(createStopAndSearch);
 
     service.getFromBounds(bounds).subscribe((data: any) => {
       expect(data).toEqual(expectedResult);
