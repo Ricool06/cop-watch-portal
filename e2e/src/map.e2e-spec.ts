@@ -3,6 +3,8 @@ import * as express from 'express';
 import * as cors from 'cors';
 import { Server } from 'http';
 import { stopsStreetGoodData } from './mock-data';
+import { from } from 'rxjs';
+import { distinct, toArray } from 'rxjs/operators';
 
 describe('MapPage', () => {
   let page: MapPage;
@@ -34,5 +36,18 @@ describe('MapPage', () => {
 
   it('should have markers', async () => {
     await page.waitForMarkersToAppear();
+  });
+
+  it('should conglomerate markers at identical locations', async () => {
+    const markers = await page.getAllMarkers();
+
+    let stopsAtUniqueLocations;
+    from(stopsStreetGoodData.mockData.data.stopsStreet).pipe(
+      distinct(stopAndSearch => stopAndSearch.location.latitude),
+      distinct(stopAndSearch => stopAndSearch.location.longitude),
+      toArray(),
+    ).subscribe(stops => stopsAtUniqueLocations = stops);
+
+    expect(markers.length).toBe(stopsAtUniqueLocations.length);
   });
 });

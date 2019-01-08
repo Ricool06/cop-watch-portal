@@ -1,6 +1,8 @@
 import { Component, OnInit, Input, Output, EventEmitter, OnChanges, SimpleChanges, AfterViewInit } from '@angular/core';
 import * as L from 'leaflet';
 import { StopAndSearch } from 'src/app/model/stop-and-search';
+import { from } from 'rxjs';
+import { distinct } from 'rxjs/operators';
 
 @Component({
   selector: 'app-map-view',
@@ -41,10 +43,7 @@ export class MapViewComponent implements OnInit, OnChanges {
       attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
     }).addTo(this.leafletMap);
 
-    this.leafletMap.on('moveend', () => {
-      this.mapBounds.emit(this.leafletMap.getBounds());
-    });
-
+    this.leafletMap.on('moveend', () => this.mapBounds.emit(this.leafletMap.getBounds()));
     this.mapBounds.emit(this.leafletMap.getBounds());
   }
 
@@ -52,8 +51,14 @@ export class MapViewComponent implements OnInit, OnChanges {
     const newStopAndSearches: StopAndSearch[] = changes.stopAndSearches.currentValue;
 
     this.markers.map((marker: L.Marker) => this.leafletMap.removeLayer(marker));
-    newStopAndSearches.map((stopAndSearch: StopAndSearch) => {
-      this.markers.push(L.marker(stopAndSearch.location.latLng, this.markerOptions).addTo(this.leafletMap));
-    });
+
+    from(newStopAndSearches).pipe(
+      distinct(stopAndSearch => stopAndSearch.location.latLng.lat),
+      distinct(stopAndSearch => stopAndSearch.location.latLng.lng),
+    ).subscribe(stopAndSearch => this.addMarkerForStopAndSearch(stopAndSearch));
+  }
+
+  private addMarkerForStopAndSearch(stopAndSearch: StopAndSearch) {
+    this.markers.push(L.marker(stopAndSearch.location.latLng, this.markerOptions).addTo(this.leafletMap));
   }
 }
