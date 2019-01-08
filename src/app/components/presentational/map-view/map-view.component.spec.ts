@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MapViewComponent } from './map-view.component';
 import { Component, ViewChild } from '@angular/core';
 import { StopAndSearch } from 'src/app/model/stop-and-search';
@@ -100,25 +100,47 @@ describe('MapViewComponent', () => {
       }),
     };
 
-    let marker: L.Marker;
-
     const realLMarkerFunc = L.marker;
     const markers = [];
 
     spyOn(L, 'marker').and.callFake((...args) => {
       expect(args[1]).toEqual(expectedMarkerOptions);
 
-      marker = realLMarkerFunc(args[0], args[1]);
+      const marker: L.Marker = realLMarkerFunc(args[0], args[1]);
       spyOn(marker, 'addTo');
       markers.push(marker);
       return marker;
     });
 
-    expect(marker).toBeFalsy();
+    expect(markers.length).toBe(0);
     parentComponent.stopAndSearches = mockStopAndSearches;
 
     fixture.detectChanges();
     expect(markers.length).toBe(mockStopAndSearches.length);
     markers.map((thisMarker: L.Marker) => expect(thisMarker.addTo).toHaveBeenCalledWith(component.leafletMap));
+  });
+
+  it('should conglomerate markers at the same location', () => {
+    const identicalStopAndSearches: StopAndSearch[] = [
+      { location: { latLng: new L.LatLng(1, 1) } },
+      { location: { latLng: new L.LatLng(1, 1) } },
+      { location: { latLng: new L.LatLng(1, 1) } },
+      { location: { latLng: new L.LatLng(1, 1) } },
+    ];
+
+    const realLMarkerFunc = L.marker;
+    const markers = [];
+
+    spyOn(L, 'marker').and.callFake((...args) => {
+      const marker: L.Marker = realLMarkerFunc(args[0], args[1]);
+      markers.push(marker);
+      return marker;
+    });
+
+    expect(markers.length).toBe(0);
+    parentComponent.stopAndSearches = identicalStopAndSearches;
+
+    fixture.detectChanges();
+    expect(markers.length).toBe(1);
   });
 });
