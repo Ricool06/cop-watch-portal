@@ -20,6 +20,7 @@ export const stopsStreetGoodData = {
         { location: { latitude: '51.510790', longitude: '-0.086052' } },
         { location: { latitude: '51.510790', longitude: '-0.086052' } },
         { location: { latitude: '51.504200', longitude: '-0.109192' } },
+        { location: { latitude: '51.504200', longitude: '-0.086052' } },
       ],
     },
   },

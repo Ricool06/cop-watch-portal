@@ -5,6 +5,7 @@ import { Server } from 'http';
 import { stopsStreetGoodData } from './mock-data';
 import { from } from 'rxjs';
 import { distinct, toArray } from 'rxjs/operators';
+import { ElementFinder } from 'protractor';
 
 describe('MapPage', () => {
   let page: MapPage;
@@ -43,11 +44,16 @@ describe('MapPage', () => {
 
     let stopsAtUniqueLocations;
     from(stopsStreetGoodData.mockData.data.stopsStreet).pipe(
-      distinct(stopAndSearch => stopAndSearch.location.latitude),
-      distinct(stopAndSearch => stopAndSearch.location.longitude),
+      distinct(stopAndSearch => `${stopAndSearch.location.latitude},${stopAndSearch.location.longitude}`),
       toArray(),
     ).subscribe(stops => stopsAtUniqueLocations = stops);
 
     expect(markers.length).toBe(stopsAtUniqueLocations.length);
+  });
+
+  it('should have clickable markers that display a table of information about stops at that location', async () => {
+    await page.clickAMarker();
+
+    expect(page.getDataTable().isDisplayed()).toBe(true);
   });
 });

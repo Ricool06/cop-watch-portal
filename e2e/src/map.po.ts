@@ -1,8 +1,9 @@
-import { browser, by, element, protractor, $ } from 'protractor';
+import { browser, by, element, protractor, $, ElementFinder } from 'protractor';
 
 export class MapPage {
-  firstMarkerSelector = '#map > div.leaflet-pane.leaflet-map-pane > div.leaflet-pane.leaflet-marker-pane > img:nth-child(1)';
-  markersSelector = '#map > div.leaflet-pane.leaflet-map-pane > div.leaflet-pane.leaflet-marker-pane > img';
+  private firstMarkerSelector = '#map > div.leaflet-pane.leaflet-map-pane > div.leaflet-pane.leaflet-marker-pane > img:nth-child(1)';
+  private markersSelector = '#map > div.leaflet-pane.leaflet-map-pane > div.leaflet-pane.leaflet-marker-pane > img';
+  private dataTableSelector = 'app-data-table';
 
   navigateTo() {
     return browser.get('/');
@@ -23,5 +24,9 @@ export class MapPage {
 
   clickAMarker() {
     return element(by.css(this.firstMarkerSelector)).click();
+  }
+
+  getDataTable(): ElementFinder {
+    return element(by.css(this.dataTableSelector));
   }
 }
