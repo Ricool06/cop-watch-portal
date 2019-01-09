@@ -4,6 +4,7 @@ import { LatLngBounds, LatLng } from 'leaflet';
 import { flatMap, toArray, map } from 'rxjs/operators';
 import { from, Observable } from 'rxjs';
 import { StopAndSearch, ApiStopAndSearch } from '../model/stop-and-search';
+import * as moment from 'moment';
 
 @Injectable({
   providedIn: 'root',
@@ -44,6 +45,13 @@ export class StopsStreetService {
           Number(stopAndSearchFromApi.location.longitude),
         ),
       },
+      datetime: moment(stopAndSearchFromApi.datetime),
+      type: stopAndSearchFromApi.type,
+      object_of_search: stopAndSearchFromApi.object_of_search,
+      self_defined_ethnicity: stopAndSearchFromApi.self_defined_ethnicity,
+      age_range: stopAndSearchFromApi.age_range,
+      gender: stopAndSearchFromApi.gender,
+      outcome: stopAndSearchFromApi.outcome,
     };
   }
 }

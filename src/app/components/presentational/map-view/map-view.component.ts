@@ -2,7 +2,7 @@ import { Component, OnInit, Input, Output, EventEmitter, OnChanges, SimpleChange
 import * as L from 'leaflet';
 import { StopAndSearch } from 'src/app/model/stop-and-search';
 import { from } from 'rxjs';
-import { distinct } from 'rxjs/operators';
+import { distinct, filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-map-view',
@@ -15,6 +15,9 @@ export class MapViewComponent implements OnInit, OnChanges {
 
   @Output()
   public mapBounds = new EventEmitter<L.LatLngBounds>();
+
+  @Output()
+  public markerClicked = new EventEmitter<L.Marker>();
 
   // Ideally, this would be private.
   // However testing the emission of events from this component is nigh on
@@ -48,17 +51,42 @@ export class MapViewComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    const newStopAndSearches: StopAndSearch[] = changes.stopAndSearches.currentValue;
+    const currentStops: StopAndSearch[] = changes.stopAndSearches.currentValue;
+    const previousStops: StopAndSearch[] = changes.stopAndSearches.previousValue || [];
 
-    this.markers.map((marker: L.Marker) => this.leafletMap.removeLayer(marker));
+    this.createNewMarkers(currentStops);
+    this.removeOutOfViewMarkers();
+  }
 
-    from(newStopAndSearches).pipe(
-      distinct(stopAndSearch => stopAndSearch.location.latLng.lat),
-      distinct(stopAndSearch => stopAndSearch.location.latLng.lng),
+  private createNewMarkers(currentStops: StopAndSearch[]) {
+    from(currentStops).pipe(
+      distinct(stopAndSearch => stopAndSearch.location.latLng),
+      filter(stopAndSearch => this.markers.length === 0 || !this.alreadyHasMarker(stopAndSearch)),
     ).subscribe(stopAndSearch => this.addMarkerForStopAndSearch(stopAndSearch));
   }
 
+  private removeOutOfViewMarkers() {
+    this.markers
+      .filter(marker => !this.leafletMap.getBounds().contains(marker.getLatLng()))
+      .forEach((marker) => {
+        this.leafletMap.removeLayer(marker);
+        this.markers.splice(this.markers.indexOf(marker), 1);
+      });
+  }
+
+  private alreadyHasMarker(stopAndSearch: StopAndSearch): boolean {
+    return this.markers.some(marker => this.isAtMarker(stopAndSearch, marker));
+  }
+
+  private isAtMarker(stopAndSearch: StopAndSearch, marker: L.Marker): boolean {
+    return !marker || marker.getLatLng().equals(stopAndSearch.location.latLng);
+  }
+
   private addMarkerForStopAndSearch(stopAndSearch: StopAndSearch) {
-    this.markers.push(L.marker(stopAndSearch.location.latLng, this.markerOptions).addTo(this.leafletMap));
+    const newMarker = L.marker(stopAndSearch.location.latLng, this.markerOptions);
+    newMarker.on('click', (event: L.LeafletEvent) => {
+      this.markerClicked.emit(event.target);
+    });
+    this.markers.push(newMarker.addTo(this.leafletMap));
   }
 }

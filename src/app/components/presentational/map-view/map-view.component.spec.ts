@@ -3,20 +3,27 @@ import { MapViewComponent } from './map-view.component';
 import { Component, ViewChild } from '@angular/core';
 import { StopAndSearch } from 'src/app/model/stop-and-search';
 import * as L from 'leaflet';
+import { createStopAndSearch } from 'test-helpers';
 
 @Component({
   selector: 'app-map',
   template: `<app-map-view
   [stopAndSearches]="stopAndSearches"
-  (mapBounds)="onMapBoundsChange($event)"></app-map-view>`,
+  (mapBounds)="onMapBoundsChange($event)"
+  (markerClicked)="onMarkerClick($event)"></app-map-view>`,
 })
 class MockParentComponent {
   @ViewChild(MapViewComponent) childComponent: MapViewComponent;
   stopAndSearches: StopAndSearch[] = [];
   mapBounds: L.LatLngBounds;
+  marker: L.Marker;
 
   onMapBoundsChange(newMapBounds: L.LatLngBounds) {
     this.mapBounds = newMapBounds;
+  }
+
+  onMarkerClick(marker: L.Marker) {
+    this.marker = marker;
   }
 }
 
@@ -54,8 +61,8 @@ describe('MapViewComponent', () => {
 
   it('should have a stopAndSearches input', () => {
     const mockStopAndSearches: StopAndSearch[] = [
-      { location: { latLng: new L.LatLng(1, 1) } },
-      { location: { latLng: new L.LatLng(2, 2) } },
+      createStopAndSearch(new L.LatLng(1, 1)),
+      createStopAndSearch(new L.LatLng(2, 2)),
     ];
 
     expect(component.stopAndSearches).toEqual([]);
@@ -66,10 +73,9 @@ describe('MapViewComponent', () => {
     expect(component.stopAndSearches).toEqual(mockStopAndSearches);
   });
 
-  it('should emit event from mapBounds at startup', () => {
-    fixture.whenStable().then(() => {
-      expect(parentComponent.mapBounds).toBeDefined();
-    });
+  it('should emit event from mapBounds at startup', async () => {
+    await fixture.whenStable();
+    expect(parentComponent.mapBounds).toBeDefined();
   });
 
   it('should emit event from mapBounds when map bounds change', (done) => {
@@ -86,10 +92,10 @@ describe('MapViewComponent', () => {
     });
   });
 
-  it('should place markers at stop and search locations every time they update, and use the correct icon', () => {
+  it('should place markers at stop and search locations every time they update, and use the correct icon', async () => {
     const mockStopAndSearches: StopAndSearch[] = [
-      { location: { latLng: new L.LatLng(1, 1) } },
-      { location: { latLng: new L.LatLng(2, 2) } },
+      createStopAndSearch(new L.LatLng(1, 1)),
+      createStopAndSearch(new L.LatLng(2, 2)),
     ];
     const expectedMarkerOptions = {
       icon: L.icon({
@@ -107,8 +113,8 @@ describe('MapViewComponent', () => {
       expect(args[1]).toEqual(expectedMarkerOptions);
 
       const marker: L.Marker = realLMarkerFunc(args[0], args[1]);
-      spyOn(marker, 'addTo');
       markers.push(marker);
+      spyOn(marker, 'addTo').and.callThrough();
       return marker;
     });
 
@@ -116,16 +122,18 @@ describe('MapViewComponent', () => {
     parentComponent.stopAndSearches = mockStopAndSearches;
 
     fixture.detectChanges();
+    await fixture.whenStable();
+
     expect(markers.length).toBe(mockStopAndSearches.length);
     markers.map((thisMarker: L.Marker) => expect(thisMarker.addTo).toHaveBeenCalledWith(component.leafletMap));
   });
 
   it('should conglomerate markers at the same location', () => {
     const identicalStopAndSearches: StopAndSearch[] = [
-      { location: { latLng: new L.LatLng(1, 1) } },
-      { location: { latLng: new L.LatLng(1, 1) } },
-      { location: { latLng: new L.LatLng(1, 1) } },
-      { location: { latLng: new L.LatLng(1, 1) } },
+      createStopAndSearch(new L.LatLng(1, 1)),
+      createStopAndSearch(new L.LatLng(1, 1)),
+      createStopAndSearch(new L.LatLng(1, 1)),
+      createStopAndSearch(new L.LatLng(1, 1)),
     ];
 
     const realLMarkerFunc = L.marker;
@@ -142,5 +150,96 @@ describe('MapViewComponent', () => {
 
     fixture.detectChanges();
     expect(markers.length).toBe(1);
+  });
+
+  it('should add markers idempotently', async () => {
+    const mockStopAndSearches: StopAndSearch[] = [
+      createStopAndSearch(new L.LatLng(51.505, -0.09)),
+      createStopAndSearch(new L.LatLng(51.5064, -0.09)),
+    ];
+
+    const realLMarkerFunc = L.marker;
+    const markers = [];
+
+    spyOn(L, 'marker').and.callFake((...args) => {
+      const marker: L.Marker = realLMarkerFunc(args[0], args[1]);
+      markers.push(marker);
+      return marker;
+    });
+
+    expect(markers.length).toBe(0);
+    parentComponent.stopAndSearches = mockStopAndSearches;
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(markers.length).toBe(2);
+
+    parentComponent.stopAndSearches = mockStopAndSearches.concat([
+      createStopAndSearch(new L.LatLng(51.5042, -0.09)),
+    ]);
+    spyOn(component.leafletMap, 'removeLayer').and.callThrough();
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(component.leafletMap.removeLayer).not.toHaveBeenCalled();
+    expect(markers.length).toBe(3);
+  });
+
+  it('should remove markers not in view', async () => {
+    const mockStopAndSearches: StopAndSearch[] = [
+      createStopAndSearch(new L.LatLng(1, 1)),
+      createStopAndSearch(new L.LatLng(2, 2)),
+      createStopAndSearch(new L.LatLng(1, 2)),
+      createStopAndSearch(new L.LatLng(51.505, -0.09)),
+    ];
+
+    const realLMarkerFunc = L.marker;
+    const markers = [];
+
+    spyOn(L, 'marker').and.callFake((...args) => {
+      const marker: L.Marker = realLMarkerFunc(args[0], args[1]);
+      markers.push(marker);
+      return marker;
+    });
+
+    expect(markers.length).toBe(0);
+    parentComponent.stopAndSearches = mockStopAndSearches;
+
+    spyOn(component.leafletMap, 'removeLayer').and.callThrough();
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(markers.length).toBe(mockStopAndSearches.length);
+
+    parentComponent.stopAndSearches = [createStopAndSearch(new L.LatLng(1, 1))];
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(component.leafletMap.removeLayer).not.toHaveBeenCalledWith(markers[3]);
+    expect(component.leafletMap.removeLayer).toHaveBeenCalledWith(markers[1]);
+  });
+
+  it('should emit an event containing the clicked marker when a marker is clicked', async () => {
+    parentComponent.stopAndSearches = [
+      createStopAndSearch(new L.LatLng(51.505, -0.09)),
+    ];
+
+    const realLMarkerFunc = L.marker;
+    let marker: L.Marker;
+
+    spyOn(L, 'marker').and.callFake((...args) => {
+      marker = realLMarkerFunc(args[0], args[1]);
+      return marker;
+    });
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    marker.fire('click');
+
+    expect(parentComponent.marker).toBe(marker);
   });
 });

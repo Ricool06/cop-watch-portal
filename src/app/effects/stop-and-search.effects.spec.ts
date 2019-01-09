@@ -8,6 +8,7 @@ import * as ActionsModule from '../actions/stop-and-search-data';
 import { LatLngBounds, LatLng } from 'leaflet';
 import { StopsStreetService } from '../services/stops-street.service';
 import { StopAndSearch } from '../model/stop-and-search';
+import { createStopAndSearch } from 'test-helpers';
 
 describe('StopAndSearchEffects', () => {
   let actions$: Observable<any>;
@@ -34,8 +35,8 @@ describe('StopAndSearchEffects', () => {
 
   it('should emit a success action upon getting data', () => {
     const mockStopAndSearches: StopAndSearch[] = [
-      { location: { latLng: new LatLng(1, 1) } },
-      { location: { latLng: new LatLng(2, 2) } },
+      createStopAndSearch(new LatLng(1, 1)),
+      createStopAndSearch(new LatLng(2, 2)),
     ];
     stopsStreetService.getFromBounds.and.returnValue(of(mockStopAndSearches));
 

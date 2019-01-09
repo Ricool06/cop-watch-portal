@@ -1,0 +1,39 @@
+<table mat-table [dataSource]="data">
+  <ng-container matColumnDef="datetime">
+    <th mat-header-cell *matHeaderCellDef> Time </th>
+    <td mat-cell *matCellDef="let stopAndSearch"> {{stopAndSearch.datetime | amDateFormat:'DD-MM-YYYY HH:mm' }} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="type">
+    <th mat-header-cell *matHeaderCellDef> Type </th>
+    <td mat-cell *matCellDef="let stopAndSearch"> {{stopAndSearch.type}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="object_of_search">
+    <th mat-header-cell *matHeaderCellDef> Reason </th>
+    <td mat-cell *matCellDef="let stopAndSearch"> {{stopAndSearch.object_of_search}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="outcome">
+    <th mat-header-cell *matHeaderCellDef> Outcome </th>
+    <td mat-cell *matCellDef="let stopAndSearch"> {{stopAndSearch.outcome}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="age_range">
+    <th mat-header-cell *matHeaderCellDef> Age Range </th>
+    <td mat-cell *matCellDef="let stopAndSearch"> {{stopAndSearch.age_range}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="self_defined_ethnicity">
+    <th mat-header-cell *matHeaderCellDef> Ethnicity </th>
+    <td mat-cell *matCellDef="let stopAndSearch"> {{stopAndSearch.self_defined_ethnicity}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="gender">
+    <th mat-header-cell *matHeaderCellDef> Gender </th>
+    <td mat-cell *matCellDef="let stopAndSearch"> {{stopAndSearch.gender}} </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
+  <tr mat-row *matRowDef="let row; columns: columnsToDisplay"></tr>
+</table>
