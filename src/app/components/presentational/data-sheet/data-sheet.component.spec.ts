@@ -57,12 +57,31 @@ describe('DataSheetComponent', () => {
     const firstRow: Element = fixture.nativeElement.querySelector('.mat-row');
     const cellsInFirstRow: NodeListOf<Element> = firstRow.querySelectorAll('.mat-cell');
 
-    expect(cellsInFirstRow[0].textContent).toBe(mockData[0].datetime.format('DD-MM-YYYY HH:mm'));
-    expect(cellsInFirstRow[1].textContent).toBe(mockData[0].type);
-    expect(cellsInFirstRow[2].textContent).toBe(mockData[0].object_of_search);
-    expect(cellsInFirstRow[3].textContent).toBe(mockData[0].outcome);
-    expect(cellsInFirstRow[4].textContent).toBe(mockData[0].age_range);
-    expect(cellsInFirstRow[5].textContent).toBe(mockData[0].self_defined_ethnicity);
-    expect(cellsInFirstRow[6].textContent).toBe(mockData[0].gender);
+    expect(cellsInFirstRow[0].textContent).toBe(` ${mockData[0].datetime.format('DD-MM-YYYY HH:mm')} `);
+    expect(cellsInFirstRow[1].textContent).toBe(` ${mockData[0].type} `);
+    expect(cellsInFirstRow[2].textContent).toBe(` ${mockData[0].object_of_search} `);
+    expect(cellsInFirstRow[3].textContent).toBe(` ${mockData[0].outcome} `);
+    expect(cellsInFirstRow[4].textContent).toBe(` ${mockData[0].age_range} `);
+    expect(cellsInFirstRow[5].textContent).toBe(` ${mockData[0].self_defined_ethnicity} `);
+    expect(cellsInFirstRow[6].textContent).toBe(` ${mockData[0].gender} `);
+  });
+
+  it('should show nicely formatted headers', () => {
+    const mockData = [
+      createStopAndSearch(new LatLng(1, 1)),
+      createStopAndSearch(new LatLng(1, 2)),
+      createStopAndSearch(new LatLng(1, 2)),
+    ];
+    createComponentWithData(mockData);
+
+    const headerCells: Element = fixture.nativeElement.querySelectorAll('.mat-header-row > .mat-header-cell');
+
+    expect(headerCells[0].textContent).toBe(' Time ');
+    expect(headerCells[1].textContent).toBe(' Type ');
+    expect(headerCells[2].textContent).toBe(' Reason ');
+    expect(headerCells[3].textContent).toBe(' Outcome ');
+    expect(headerCells[4].textContent).toBe(' Age Range ');
+    expect(headerCells[5].textContent).toBe(' Ethnicity ');
+    expect(headerCells[6].textContent).toBe(' Gender ');
   });
 });

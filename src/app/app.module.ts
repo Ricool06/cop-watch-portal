@@ -16,9 +16,11 @@ import { BaseUrlInterceptor } from './interceptors/base-url.interceptor';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { DataSheetComponent } from './components/presentational/data-sheet/data-sheet.component';
 import { MomentModule } from 'ngx-moment';
+import { MatTableModule, MatBottomSheetModule } from '@angular/material';
 
 @NgModule({
   declarations: [AppComponent, MapComponent, MapViewComponent, DataSheetComponent],
+  entryComponents: [DataSheetComponent],
   imports: [
     BrowserModule,
     HttpClientModule,
@@ -28,6 +30,8 @@ import { MomentModule } from 'ngx-moment';
       maxAge: 25,
     }) : [],
     EffectsModule.forRoot([StopAndSearchEffects]),
+    MatTableModule,
+    MatBottomSheetModule,
     BrowserAnimationsModule,
     MomentModule,
   ],

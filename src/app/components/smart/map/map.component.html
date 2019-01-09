@@ -1,4 +1,5 @@
 <app-map-view
 [stopAndSearches]="(stopAndSearches$ | async)"
 (mapBounds)="onMapBoundsChange($event)"
+(markerClicked)="onMarkerClick($event)"
 ></app-map-view>

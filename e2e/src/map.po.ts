@@ -3,7 +3,7 @@ import { browser, by, element, protractor, $, ElementFinder } from 'protractor';
 export class MapPage {
   private firstMarkerSelector = '#map > div.leaflet-pane.leaflet-map-pane > div.leaflet-pane.leaflet-marker-pane > img:nth-child(1)';
   private markersSelector = '#map > div.leaflet-pane.leaflet-map-pane > div.leaflet-pane.leaflet-marker-pane > img';
-  private dataTableSelector = 'app-data-table';
+  private dataTableSelector = 'app-data-sheet';
 
   navigateTo() {
     return browser.get('/');
