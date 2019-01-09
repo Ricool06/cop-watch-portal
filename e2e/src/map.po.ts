@@ -4,6 +4,7 @@ export class MapPage {
   private firstMarkerSelector = '#map > div.leaflet-pane.leaflet-map-pane > div.leaflet-pane.leaflet-marker-pane > img:nth-child(1)';
   private markersSelector = '#map > div.leaflet-pane.leaflet-map-pane > div.leaflet-pane.leaflet-marker-pane > img';
   private dataTableSelector = 'app-data-sheet';
+  private snackbarSelector = '.mat-simple-snackbar';
 
   navigateTo() {
     return browser.get('/');
@@ -15,7 +16,11 @@ export class MapPage {
 
   waitForMarkersToAppear() {
     const until = protractor.ExpectedConditions;
-    return browser.wait(until.presenceOf($(this.firstMarkerSelector)), 5000, 'Markers taking too long to appear');
+
+    return browser.wait(
+      until.presenceOf($(this.firstMarkerSelector)),
+      4000,
+      'Markers taking too long to appear');
   }
 
   getAllMarkers() {
@@ -28,5 +33,9 @@ export class MapPage {
 
   getDataTable(): ElementFinder {
     return element(by.css(this.dataTableSelector));
+  }
+
+  findSnackbar() {
+    return element(by.css(this.snackbarSelector)).isPresent();
   }
 }

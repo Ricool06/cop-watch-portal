@@ -1,5 +1,19 @@
 import { ApiStopAndSearch } from 'src/app/model/stop-and-search';
 
+export const stopsStreetError = {
+  errors: [
+    {
+      message: 'Cannot query field "notAValidField" on type "Query". Did you mean "stopsStreet"?',
+      locations: [
+        {
+          line: 1,
+          column: 2,
+        },
+      ],
+    },
+  ],
+};
+
 export const stopsStreetGoodData = {
   endpoint: '/graphql',
   mockData: {
