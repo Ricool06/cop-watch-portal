@@ -16,6 +16,9 @@ export class MapViewComponent implements OnInit, OnChanges {
   @Output()
   public mapBounds = new EventEmitter<L.LatLngBounds>();
 
+  @Output()
+  public markerClicked = new EventEmitter<L.Marker>();
+
   // Ideally, this would be private.
   // However testing the emission of events from this component is nigh on
   // impossible without directly moving the map in the tests. I would rather
@@ -80,6 +83,10 @@ export class MapViewComponent implements OnInit, OnChanges {
   }
 
   private addMarkerForStopAndSearch(stopAndSearch: StopAndSearch) {
-    this.markers.push(L.marker(stopAndSearch.location.latLng, this.markerOptions).addTo(this.leafletMap));
+    const newMarker = L.marker(stopAndSearch.location.latLng, this.markerOptions);
+    newMarker.on('click', (event: L.LeafletEvent) => {
+      this.markerClicked.emit(event.target);
+    });
+    this.markers.push(newMarker.addTo(this.leafletMap));
   }
 }

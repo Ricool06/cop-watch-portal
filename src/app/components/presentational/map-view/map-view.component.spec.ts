@@ -9,15 +9,21 @@ import { createStopAndSearch } from 'test-helpers';
   selector: 'app-map',
   template: `<app-map-view
   [stopAndSearches]="stopAndSearches"
-  (mapBounds)="onMapBoundsChange($event)"></app-map-view>`,
+  (mapBounds)="onMapBoundsChange($event)"
+  (markerClicked)="onMarkerClick($event)"></app-map-view>`,
 })
 class MockParentComponent {
   @ViewChild(MapViewComponent) childComponent: MapViewComponent;
   stopAndSearches: StopAndSearch[] = [];
   mapBounds: L.LatLngBounds;
+  marker: L.Marker;
 
   onMapBoundsChange(newMapBounds: L.LatLngBounds) {
     this.mapBounds = newMapBounds;
+  }
+
+  onMarkerClick(marker: L.Marker) {
+    this.marker = marker;
   }
 }
 
@@ -67,10 +73,9 @@ describe('MapViewComponent', () => {
     expect(component.stopAndSearches).toEqual(mockStopAndSearches);
   });
 
-  it('should emit event from mapBounds at startup', () => {
-    fixture.whenStable().then(() => {
-      expect(parentComponent.mapBounds).toBeDefined();
-    });
+  it('should emit event from mapBounds at startup', async () => {
+    await fixture.whenStable();
+    expect(parentComponent.mapBounds).toBeDefined();
   });
 
   it('should emit event from mapBounds when map bounds change', (done) => {
@@ -215,5 +220,26 @@ describe('MapViewComponent', () => {
 
     expect(component.leafletMap.removeLayer).not.toHaveBeenCalledWith(markers[3]);
     expect(component.leafletMap.removeLayer).toHaveBeenCalledWith(markers[1]);
+  });
+
+  it('should emit an event containing the clicked marker when a marker is clicked', async () => {
+    parentComponent.stopAndSearches = [
+      createStopAndSearch(new L.LatLng(51.505, -0.09)),
+    ];
+
+    const realLMarkerFunc = L.marker;
+    let marker: L.Marker;
+
+    spyOn(L, 'marker').and.callFake((...args) => {
+      marker = realLMarkerFunc(args[0], args[1]);
+      return marker;
+    });
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    marker.fire('click');
+
+    expect(parentComponent.marker).toBe(marker);
   });
 });

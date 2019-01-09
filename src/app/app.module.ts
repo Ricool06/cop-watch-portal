@@ -14,9 +14,11 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { MapComponent } from './components/smart/map/map.component';
 import { BaseUrlInterceptor } from './interceptors/base-url.interceptor';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { DataSheetComponent } from './components/presentational/data-sheet/data-sheet.component';
+import { MomentModule } from 'ngx-moment';
 
 @NgModule({
-  declarations: [AppComponent, MapComponent, MapViewComponent],
+  declarations: [AppComponent, MapComponent, MapViewComponent, DataSheetComponent],
   imports: [
     BrowserModule,
     HttpClientModule,
@@ -27,6 +29,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     }) : [],
     EffectsModule.forRoot([StopAndSearchEffects]),
     BrowserAnimationsModule,
+    MomentModule,
   ],
   providers: [{
     provide: HTTP_INTERCEPTORS,
