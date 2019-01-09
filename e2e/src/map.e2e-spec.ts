@@ -5,7 +5,6 @@ import { Server } from 'http';
 import { stopsStreetGoodData } from './mock-data';
 import { from } from 'rxjs';
 import { distinct, toArray } from 'rxjs/operators';
-import { ElementFinder } from 'protractor';
 
 describe('MapPage', () => {
   let page: MapPage;
