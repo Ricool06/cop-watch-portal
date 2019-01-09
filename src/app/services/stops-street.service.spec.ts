@@ -1,8 +1,7 @@
-import { TestBed, async, inject } from '@angular/core/testing';
+import { TestBed, inject } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { StopsStreetService } from './stops-street.service';
 import { LatLngBounds, LatLng } from 'leaflet';
-import { environment } from '../../environments/environment';
 import { ApiStopAndSearch } from '../model/stop-and-search';
 import { createApiStopAndSearch, createStopAndSearch } from 'test-helpers';
 
@@ -66,7 +65,17 @@ describe('Service: StopsStreet', () => {
       expect(data).toEqual(expectedResult);
     });
 
-    const requester = httpMock.expectOne(`/graphql?query={stopsStreet(poly: "${expectedPolyString}"){location{latitude longitude}}}`);
+    const mockQuery = `{stopsStreet(poly: "${expectedPolyString}"){
+        location {latitude longitude}
+        datetime
+        type
+        object_of_search
+        self_defined_ethnicity
+        age_range
+        gender
+        outcome}}`.replace(/\s\s+/g, ' ');
+
+    const requester = httpMock.expectOne(`/graphql?query=${mockQuery}`);
     expect(requester.request.method).toBe('GET');
     expect(requester.request.headers.get('X-Event-Type')).toBe('police-data');
 
