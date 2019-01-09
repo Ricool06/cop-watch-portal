@@ -15,9 +15,10 @@ export class StopsStreetService {
 
   public getFromBounds(latLngBounds: LatLngBounds): Observable<StopAndSearch[]> {
     const polyString = this.convertLatLngBoundsToPolyString(latLngBounds);
+    const query = this.createQueryForPolyString(polyString);
 
     return this.httpClient.get(
-      `/graphql?query={stopsStreet(poly: "${polyString}"){location{latitude longitude}}}`,
+      `/graphql?query=${query}`,
       { headers: { 'X-Event-Type': 'police-data' } },
     ).pipe(
       map((data: any) => data.data.stopsStreet),
@@ -53,5 +54,17 @@ export class StopsStreetService {
       gender: stopAndSearchFromApi.gender,
       outcome: stopAndSearchFromApi.outcome,
     };
+  }
+
+  private createQueryForPolyString(polyString: string) {
+    return `{stopsStreet(poly: "${polyString}"){
+      location {latitude longitude}
+      datetime
+      type
+      object_of_search
+      self_defined_ethnicity
+      age_range
+      gender
+      outcome}}`.replace(/\s\s+/g, ' ');
   }
 }
