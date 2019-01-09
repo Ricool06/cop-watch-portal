@@ -2,9 +2,12 @@ import { MapPage } from './map.po';
 import * as express from 'express';
 import * as cors from 'cors';
 import { Server } from 'http';
-import { stopsStreetGoodData } from './mock-data';
+import { stopsStreetGoodData, stopsStreetError } from './mock-data';
 import { from } from 'rxjs';
 import { distinct, toArray } from 'rxjs/operators';
+
+let mockApiStatus;
+let mockApiResponse;
 
 describe('MapPage', () => {
   let page: MapPage;
@@ -16,16 +19,21 @@ describe('MapPage', () => {
     mockHttpServer = mockApi.listen(3000);
 
     mockApi.use(cors());
+
     mockApi.get(stopsStreetGoodData.endpoint, (req: express.Request, res: express.Response) => {
-      res.json(stopsStreetGoodData.mockData);
+      sendResponse(req, res);
     });
   });
 
   afterAll(() => {
-    mockHttpServer.close();
+    mockHttpServer.close((...args) => {
+      console.log('CLOSED GOOD TEST');
+    });
   });
 
   beforeEach(() => {
+    mockApiStatus = 200;
+    mockApiResponse = stopsStreetGoodData.mockData;
     page = new MapPage();
   });
 
@@ -55,4 +63,19 @@ describe('MapPage', () => {
 
     expect(page.getDataTable().isDisplayed()).toBe(true);
   });
+
+  it('should show an error message when the api returns an error', async () => {
+    mockApiStatus = 500;
+    mockApiResponse = stopsStreetError;
+    page = new MapPage();
+
+    await page.navigateTo();
+
+    expect(page.findSnackbar()).toBe(true);
+  });
 });
+
+function sendResponse(req, res) {
+  console.log(mockApiStatus);
+  res.status(mockApiStatus).json(mockApiResponse);
+}

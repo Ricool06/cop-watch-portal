@@ -16,7 +16,7 @@ import { BaseUrlInterceptor } from './interceptors/base-url.interceptor';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { DataSheetComponent } from './components/presentational/data-sheet/data-sheet.component';
 import { MomentModule } from 'ngx-moment';
-import { MatTableModule, MatBottomSheetModule } from '@angular/material';
+import { MatTableModule, MatBottomSheetModule, MAT_SNACK_BAR_DEFAULT_OPTIONS, MatSnackBarModule } from '@angular/material';
 
 @NgModule({
   declarations: [AppComponent, MapComponent, MapViewComponent, DataSheetComponent],
@@ -32,6 +32,7 @@ import { MatTableModule, MatBottomSheetModule } from '@angular/material';
     EffectsModule.forRoot([StopAndSearchEffects]),
     MatTableModule,
     MatBottomSheetModule,
+    MatSnackBarModule,
     BrowserAnimationsModule,
     MomentModule,
   ],
@@ -39,6 +40,10 @@ import { MatTableModule, MatBottomSheetModule } from '@angular/material';
     provide: HTTP_INTERCEPTORS,
     useClass: BaseUrlInterceptor,
     multi: true,
+  },
+  {
+    provide: MAT_SNACK_BAR_DEFAULT_OPTIONS,
+    useValue: { duration: 4000 },
   }],
   bootstrap: [AppComponent],
 })

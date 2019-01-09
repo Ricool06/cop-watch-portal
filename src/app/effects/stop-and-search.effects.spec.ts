@@ -9,20 +9,28 @@ import { LatLngBounds, LatLng } from 'leaflet';
 import { StopsStreetService } from '../services/stops-street.service';
 import { StopAndSearch } from '../model/stop-and-search';
 import { createStopAndSearch } from 'test-helpers';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material';
 
 describe('StopAndSearchEffects', () => {
-  let actions$: Observable<any>;
+  let actions$: Observable<ActionsModule.GetStopAndSearchDataAction>;
   let effects: StopAndSearchEffects;
   let stopsStreetService: jasmine.SpyObj<StopsStreetService>;
+  let snackBarService;
+  const fakeSnackBar = 'I am a string, not a snackBar';
 
   beforeEach(() => {
+    snackBarService = { open: () => undefined };
+    spyOn(snackBarService, 'open').and.returnValue(fakeSnackBar);
+
     stopsStreetService = jasmine.createSpyObj('stopsStreetService', ['getFromBounds']);
 
     TestBed.configureTestingModule({
+      imports: [MatSnackBarModule],
       providers: [
         StopAndSearchEffects,
         provideMockActions(() => actions$),
         { provide: StopsStreetService, useValue: stopsStreetService },
+        { provide: MatSnackBar, useValue: snackBarService },
       ],
     });
 
@@ -62,5 +70,41 @@ describe('StopAndSearchEffects', () => {
     const expected$ = cold('--f', { f: failureAction });
 
     expect(effects.getStopAndSearchData$).toBeObservable(expected$);
+  });
+
+  it('should convert object error messages to empty strings', () => {
+    const badErrorMessage = { amIAnObject: 'yes!' };
+    stopsStreetService.getFromBounds.and.returnValue(throwError(badErrorMessage));
+
+    const mockBounds = new LatLngBounds([0, 0], [4, 4]);
+    const inputAction = new ActionsModule.GetStopAndSearchData(mockBounds);
+    const failureAction = new ActionsModule.GetStopAndSearchDataFailure('');
+
+    actions$ = hot('--i-', { i: inputAction });
+    const expected$ = cold('--f', { f: failureAction });
+
+    expect(effects.getStopAndSearchData$).toBeObservable(expected$);
+  });
+
+  it('should create an error snackbar upon receiving a failure action', () => {
+    const errorMessage = 'Service failed!';
+
+    const inputAction = new ActionsModule.GetStopAndSearchDataFailure(errorMessage);
+
+    actions$ = hot('--i-', { i: inputAction });
+    const expected$ = cold('--f', { f: fakeSnackBar });
+
+    expect(effects.showErrorSnackBar$).toBeObservable(expected$);
+    expect(snackBarService.open).toHaveBeenCalledWith(errorMessage, 'OK');
+  });
+
+  it('should create an error snackbar with a default message upon receiving a failure action with no message', () => {
+    const inputAction = new ActionsModule.GetStopAndSearchDataFailure('');
+
+    actions$ = hot('--i-', { i: inputAction });
+    const expected$ = cold('--f', { f: fakeSnackBar });
+
+    expect(effects.showErrorSnackBar$).toBeObservable(expected$);
+    expect(snackBarService.open).toHaveBeenCalledWith('Couldn\'t fetch the data! We\'re sorry. 😞', 'OK');
   });
 });
